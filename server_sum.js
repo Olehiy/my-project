@@ -11,36 +11,58 @@ const server = http.createServer((req, res) => {
     if (parsedUrl.pathname === '/') {
         fs.readFile('index.html', (err, data) => {
             if (err) {
-                res.writeHead(500);
+                res.writeHead(500, {
+                    'Content-Type': 'text/plain'
+                });
+
                 res.end('Error loading index.html');
                 return;
             }
 
-            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.writeHead(200, {
+                'Content-Type': 'text/html'
+            });
+
             res.end(data);
         });
     }
 
-    // Сервис суммы
+    // API суммы
     else if (parsedUrl.pathname === '/sum') {
-        const a = parseFloat(parsedUrl.query.a);
-        const b = parseFloat(parsedUrl.query.b);
+        const a = Number(parsedUrl.query.a);
+        const b = Number(parsedUrl.query.b);
 
         if (isNaN(a) || isNaN(b)) {
-            res.writeHead(400, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: 'Invalid numbers' }));
+            res.writeHead(400, {
+                'Content-Type': 'application/json'
+            });
+
+            res.end(JSON.stringify({
+                error: 'Invalid numbers'
+            }));
+
             return;
         }
 
-        const result = a + b;
+        const sum = a + b;
 
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ result }));
+        res.writeHead(200, {
+            'Content-Type': 'application/json'
+        });
+
+        res.end(JSON.stringify({
+            a,
+            b,
+            sum
+        }));
     }
 
-    // Остальные маршруты
+    // 404
     else {
-        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.writeHead(404, {
+            'Content-Type': 'application/json'
+        });
+
         res.end(JSON.stringify({
             error: 'Route not found'
         }));
@@ -48,5 +70,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });
